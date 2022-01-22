@@ -29,6 +29,10 @@ func uncompressAndUpdate(src io.Reader, assetURL, cmdPath string) error {
 }
 
 func (up *Updater) downloadDirectlyFromURL(assetURL string) (io.ReadCloser, error) {
+	cnproxy := os.Getenv("CNPROXY")
+	if len(cnproxy) > 0 && (strings.HasPrefix(cnproxy, "http://") || strings.HasPrefix(cnproxy, "https://")) {
+		assetURL = fmt.Sprintf("%v/%v", cnproxy, assetURL)
+	}
 	req, err := http.NewRequest("GET", assetURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create HTTP request to %s: %s", assetURL, err)
